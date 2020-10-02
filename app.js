@@ -4,13 +4,13 @@ if (navigator.geolocation) {
   alert("Your current browser doesn't support geolocation");
 }
 var aeroZonesBGMap, curLocation;
+var zoom = 13;
 
 function initAppMap(position) {
   curLocation = {
     latitude: position.coords.latitude,
     longitude: position.coords.longitude,
   };
-  var zoom = 13;
 
   aeroZonesBGMap = L.map("mapid").setView(
     [curLocation.latitude, curLocation.longitude],
@@ -33,7 +33,26 @@ function initAppMap(position) {
   var marker = L.marker([curLocation.latitude, curLocation.longitude]).addTo(
     aeroZonesBGMap
   );
+// draw safety zones to map
+  aerozones.forEach(function (zone) {
+    if(zone.polygonType === "Circle"){
+      var circle1 = L.circle(applyCoordinates(zone), {
+        color: "red",
+        fillColor: "#f03",
+        fillOpacity: 0.3,
+        radius: zone.radius,
+      })
+      .bindPopup(zone.aerozoneName)
+      .addTo(aeroZonesBGMap);
+    }else{
+      // console.log(zone.points)
+      var polygon = L.polygon(zone.points)
+      .bindPopup(zone.aerozoneName)
+      .addTo(aeroZonesBGMap)
+    }
+  });
 }
+
 
 function resetMapLocation() {
   aeroZonesBGMap.setView(applyCoordinates(curLocation));
