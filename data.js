@@ -195,7 +195,7 @@ var aerozones = [
         center: [43.728611, 26.119444],
         all: [[43.728611, 26.119444], [43.690000,26.141111], [43.728889, 26.104444], [43.762222, 26.085556]]
       },
-      startAngle: 324,
+      startAngle: -35.75,
       endAngle: 158,
       radius: 2.5,
     },
@@ -207,7 +207,7 @@ var aerozones = [
         center: [42.067778, 24.850833],
         all: [[42.067778, 24.850833], [41.976389, 24.965278], [42.128889, 24.704167]]
       },
-      startAngle: 300,
+      startAngle: -61,
       endAngle: 137,
       radius: 7.5,
     },
@@ -219,7 +219,7 @@ var aerozones = [
         center: [43.151667, 25.711944],
         all: [[43.116667, 25.875833], [43.151667, 25.711944], [43.151389, 25.541111]]
       },
-      startAngle: 270,
+      startAngle: -90,
       endAngle: 106.2,
       radius: 7.5,
     },
@@ -231,25 +231,164 @@ var aerozones = [
         center: [42.695000, 23.408333],
         all: [[42.695000, 23.408333], [42.669444, 23.574167], [42.688611, 23.239167]]
       },
-      startAngle: 267,
+      startAngle: -92.8,
       endAngle: 102,
       radius: 7.5,
     },
+    {
+        aerozoneName: "BALCHIK",
+        icaoCode: "LBWB",
+        polygonType: "ArcSector",
+        points: {
+          center: [43.424444, 28.180833],
+          all: [[43.424444, 28.180833], [43.358333, 28.298611], [43.358333, 28.063333]]
+        },
+        startAngle: -128,
+        endAngle: 127.5,
+        radius: 6.5,
+      },
+      {
+        aerozoneName: "STUDEN KLADENETS",
+        icaoCode: "LBSK",
+        polygonType: "ArcSector",
+        points: {
+          center: [42.726667, 27.624722],
+          all: [[42.726667, 27.624722], [42.749402, 27.562399], [42.704906, 27.672658]]
+        },
+        startAngle: -64,
+        endAngle: 122,
+        radius: 3.5,
+      },
+      {
+        aerozoneName: "SOFIA WEST",
+        icaoCode: "LBSW",
+        polygonType: "ArcSector",
+        points: {
+          center: [42.444167, 22.984167],
+          all: [[42.444167, 22.984167], [42.387222, 23.108333], [42.470278, 22.842222]]
+        },
+        startAngle: -76,
+        endAngle: 121.7,
+        radius: 7.5,
+      },
+      {
+        aerozoneName: "SLIVNITSA",
+        icaoCode: "LBSA",
+        polygonType: "ArcSector",
+        points: {
+          center: [42.843889, 23.014167],
+          all: [[42.843889, 23.014167],[42.844444, 22.957500], [42.860000, 23.066389]]
+        },
+        startAngle: -293,
+        endAngle: -89,
+        radius: 2.5,
+      },
+      {
+        aerozoneName: "SLANCHEV BRYAG",
+        icaoCode: "LBSB",
+        polygonType: "ArcSector",
+        points: {
+          center: [42.726667, 27.624722],
+          all: [[42.726667, 27.624722],[42.704167, 27.672222], [42.724444, 27.622500], [42.738611, 27.570556] ]
+        },
+        startAngle: -73,
+        endAngle: 123,
+        radius: 2.5,
+      },
+      {
+        aerozoneName: "GRADISHTE",
+        icaoCode: "LBGD",
+        polygonType: "ArcSector",
+        points: {
+          center: [43.333611, 26.853889],
+          all: [[43.333611, 26.853889], [43.300556, 26.888611], [43.354167, 26.804167]]
+        },
+        startAngle: -61,
+        endAngle: 143,
+        radius: 2.5,
+      },
+      {
+        aerozoneName: "GRIVITSA",
+        icaoCode: "LBGR",
+        polygonType: "ArcSector",
+        points: {
+          center: [43.415000, 24.734722],
+          all: [[43.415000, 24.734722],[43.406667, 24.813889], [43.406667, 24.655556]]
+        },
+        startAngle: -98,
+        endAngle: 98,
+        radius: 3.5,
+      },
+      {
+        aerozoneName: "KAINARDJA",
+        icaoCode: "LBKJ",
+        polygonType: "ArcSector",
+        points: {
+          center: [43.970556, 27.469444],
+          all: [[43.970556, 27.469444],[43.930556, 27.485833], [44.002500, 27.432500]]
+        },
+        startAngle: -40,
+        endAngle: 163.5,
+        radius: 2.5,
+      },
+      {
+        aerozoneName: "KAZANLAK",
+        icaoCode: "LBKL",
+        polygonType: "ArcSector",
+        points: {
+          center: [42.586111, 25.426667],
+          all: [[42.586111, 25.426667],[42.545000, 25.436944], [42.620278, 25.394444]]
+        },
+        startAngle: -35,
+        endAngle: 169.5,
+        radius: 2.5,
+      },
+      {
+        aerozoneName: "IHTIMAN",
+        icaoCode: "LBHT",
+        polygonType: "ArcSector",
+        points: {
+          center: [42.421944, 23.767222],
+          all: [[42.421944, 23.767222],[42.387778, 23.799444], [42.444167, 23.719722]]
+        },
+        startAngle: -58,
+        endAngle: 145,
+        radius: 2.5,
+      },
+      {
+        aerozoneName: "MARITSA",
+        icaoCode: "LBMA",
+        polygonType: "ArcSector",
+        points: {
+          center: [42.265278, 24.720556],
+          all: [[42.265278, 24.720556],[42.272222, 24.665278], [42.285833, 24.769444]]
+        },
+        startAngle: 60,
+        endAngle: 280,
+        radius: 2.5,
+      },
+      {
+        aerozoneName: "LESNOVO",
+        icaoCode: "LBLS",
+        polygonType: "ArcSector",
+        points: {
+          center: [42.634444, 23.646389],
+          all: [[42.634444, 23.646389],[42.595278, 23.587778], [42.648611, 23.607222], [42.628611, 23.703056], [42.627222, 23.724722]]
+        },
+        startAngle: 97,
+        endAngle: 228,
+        radius: 3.5,
+      },
+      {
+        aerozoneName: "RUSE",
+        icaoCode: "LBRS",
+        polygonType: "ArcSector",
+        points: {
+          center: [43.695000, 26.056667],
+          all: [[43.641667, 26.186667], [43.640556, 25.927778], [43.728889, 26.104444]]
+        },
+        startAngle: 120,
+        endAngle: 240,
+        radius: 6.5,
+      },
   ];
-  
-  //special once
-  //SOFIA
-  //BALCHIK
-  //STUDEN KLADENETS
-  //SOFIA WEST
-  //SLIVNITSA
-  //SLANCHEV BRYAG
-  //GRADISHTE
-  //GRIVITSA
-  //KAINARDJA
-  //KAZANLAK
-  //IHTIMAN
-  //MARITSA
-  //LESNOVO
-  //RUSE
-  
