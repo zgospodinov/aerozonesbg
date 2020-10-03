@@ -5,6 +5,10 @@ if (navigator.geolocation) {
 }
 var aeroZonesBGMap, curLocation;
 var zoom = 13;
+var opacity = 0.1;
+var NM_TO_KM_FACTOR = 1.852;
+var zoomAllFeatureGroupLayerPoints = [];
+var zoomAllFeatureGroupLayer;
 
 function initAppMap(position) {
   curLocation = {
@@ -29,35 +33,66 @@ function initAppMap(position) {
       accessToken: "your.mapbox.access.token",
     }
   ).addTo(aeroZonesBGMap);
-
+  L.control
+    .scale({
+      metric: true,
+      imperial: false
+    })
+    .addTo(aeroZonesBGMap);
   var marker = L.marker([curLocation.latitude, curLocation.longitude]).addTo(
     aeroZonesBGMap
   );
-// draw safety zones to map
+
+  // draw safety zones that requiers airspace booking
   aerozones.forEach(function (zone) {
-    if(zone.polygonType === "Circle"){
+    if (zone.polygonType === "Circle") {
       var circle1 = L.circle(applyCoordinates(zone), {
         color: "red",
         fillColor: "#f03",
-        fillOpacity: 0.3,
-        radius: zone.radius,
+        weight: 0.8,
+        fillOpacity: opacity,
+        radius: zone.radius * NM_TO_KM_FACTOR * 1000, // Convert Nautical miles to meters,
+      })
+        .bindPopup(`<br>${zone.aerozoneName}</br>`)
+        .addTo(aeroZonesBGMap);
+    } else if(zone.polygonType === "Polygon"){
+      var polygon = L.polygon(zone.points, {
+        color: "red",
+        fillColor: "#f03",
+        opacity: opacity
+      })
+        .bindPopup(zone.aerozoneName)
+        .addTo(aeroZonesBGMap);        
+    }else if (zone.polygonType === "ArcSector"){
+      var sector = L.circle(zone.points.center,{
+        color: "red",
+        radius: zone.radius * NM_TO_KM_FACTOR * 1000,
+        weight: 0.8,
+        startAngle: zone.startAngle,
+        endAngle: zone.endAngle
       })
       .bindPopup(zone.aerozoneName)
       .addTo(aeroZonesBGMap);
-    }else{
-      // console.log(zone.points)
-      var polygon = L.polygon(zone.points)
-      .bindPopup(zone.aerozoneName)
-      .addTo(aeroZonesBGMap)
-    }
-  });
-}
 
+      var polyLineAddition = L.polygon(zone.points.all,{
+        color: "red",
+        weight: 0.8,
+        fillColor: "#f03"
+      })
+      .bindPopup(zone.aerozoneName)
+      .addTo(aeroZonesBGMap);
+    }  
+  });
+};
+
+function zoomToAll(){
+    // aeroZonesBGMap.fitBounds(zoomAllFeatureGroupLayer.getBounds(), {padding: [10,10]});
+};
 
 function resetMapLocation() {
   aeroZonesBGMap.setView(applyCoordinates(curLocation));
-}
+};
 
 function applyCoordinates(pos) {
   return [pos.latitude, pos.longitude];
-}
+};

@@ -9,17 +9,19 @@
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-
+    
     <title>AerozonesBG</title>
   </head>
   <body>
     <h1>AerozonesBG</h1>
     <span>Safety zones nearby military and civil airports in Bulgaria</span>    
     
-    <button id="reset-location" onclick="resetMapLocation()">Current location</button>
+    <button id="reset-location" onclick="resetMapLocation()">Reset Location</button>
+    <button id="zoom-all" onclick="zoomToAll()">Show All</button>
     <div id="mapid" style="height: 400px;"></div>
-
-
+    
+    
+    <script src="app/vendors//leaflet.circle-sector.js"></script>
     <script src="data.js"></script>
     <script src="app.js"></script>
   </body>
