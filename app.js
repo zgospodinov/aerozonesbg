@@ -36,16 +36,28 @@ function initAppMap(position) {
   L.control
     .scale({
       metric: true,
-      imperial: false
+      imperial: false,
     })
     .addTo(aeroZonesBGMap);
   var marker = L.marker([curLocation.latitude, curLocation.longitude]).addTo(
     aeroZonesBGMap
   );
 
-  L.easyButton('<i class="fas fa-street-view"></i>', function(btn, map){
-    resetMapLocation();
-  }).addTo(aeroZonesBGMap);
+  L.easyButton(
+    '<i class="fas fa-street-view"></i>',
+    function (btn, map) {
+      resetMapLocation();
+    },
+    "Back to current location"
+  ).addTo(aeroZonesBGMap);
+
+  L.easyButton(
+    '<i class="fas fa-globe-europe"></i>',
+    function (btn, map) {
+      zoomToAll();
+    },
+    "Show all zones"
+  ).addTo(aeroZonesBGMap);
 
   // draw safety zones that requiers airspace booking
   aerozones.forEach(function (zone) {
@@ -59,45 +71,50 @@ function initAppMap(position) {
       })
         .bindPopup(`<br>${zone.aerozoneName}</br>`)
         .addTo(aeroZonesBGMap);
-    } else if(zone.polygonType === "Polygon"){
+    } else if (zone.polygonType === "Polygon") {
       var polygon = L.polygon(zone.points, {
         color: "red",
         fillColor: "#f03",
-        opacity: opacity
+        opacity: opacity,
       })
         .bindPopup(zone.aerozoneName)
-        .addTo(aeroZonesBGMap);        
-    }else if (zone.polygonType === "ArcSector"){
-      var sector = L.circle(zone.points.center,{
+        .addTo(aeroZonesBGMap);
+    } else if (zone.polygonType === "ArcSector") {
+      var sector = L.circle(zone.points.center, {
         color: "red",
         radius: zone.radius * NM_TO_KM_FACTOR * 1000,
         weight: 0.8,
         startAngle: zone.startAngle,
-        endAngle: zone.endAngle
+        endAngle: zone.endAngle,
       })
-      .bindPopup(zone.aerozoneName)
-      .addTo(aeroZonesBGMap);
+        .bindPopup(zone.aerozoneName)
+        .addTo(aeroZonesBGMap);
 
-      var polyLineAddition = L.polygon(zone.points.all,{
+      var polyLineAddition = L.polygon(zone.points.all, {
         color: "red",
         weight: 0.8,
-        fillColor: "#f03"
+        fillColor: "#f03",
       })
-      .bindPopup(zone.aerozoneName)
-      .addTo(aeroZonesBGMap);
-    }  
+        .bindPopup(zone.aerozoneName)
+        .addTo(aeroZonesBGMap);
+    }
   });
-};
+}
 
-function zoomToAll(){
-    // aeroZonesBGMap.fitBounds(zoomAllFeatureGroupLayer.getBounds(), {padding: [10,10]});
-};
+function zoomToAll() {
+  aerozones.forEach(function (point) {
+    if (point.aerozoneName === "KAZANLAK") {
+      aeroZonesBGMap.setView(point.points.center);
+      aeroZonesBGMap.setZoom(7);
+    }
+  });
+}
 
 function resetMapLocation() {
   aeroZonesBGMap.setView(applyCoordinates(curLocation));
   aeroZonesBGMap.setZoom(zoom);
-};
+}
 
 function applyCoordinates(pos) {
   return [pos.latitude, pos.longitude];
-};
+}
