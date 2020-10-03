@@ -1,25 +1,60 @@
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(initAppMap);
-} else {
-  alert("Your current browser doesn't support geolocation");
-}
-var aeroZonesBGMap, curLocation;
+var aeroZonesBGMap, curLocation, centerLocation;
 var zoom = 13;
 var opacity = 0.1;
 var NM_TO_KM_FACTOR = 1.852;
 var zoomAllFeatureGroupLayerPoints = [];
 var zoomAllFeatureGroupLayer;
 
-function initAppMap(position) {
-  curLocation = {
-    latitude: position.coords.latitude,
-    longitude: position.coords.longitude,
-  };
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(initMapAtCurrentLocation, onError);
+  } else {
+    // Continue without geolocation service
+    onError();
+  }
+}
 
-  aeroZonesBGMap = L.map("mapid").setView(
-    [curLocation.latitude, curLocation.longitude],
-    zoom
+// Loading map with no geolocation service, show all zones at once
+function onError() {
+  getCenterLocation();
+  initAerozonesBGMap(
+    {
+      latitude: centerLocation.points.center[0],
+      longitude: centerLocation.points.center[1],
+    },
+    { zoomAll: true }
   );
+}
+
+// Hardcoded position on map
+function getCenterLocation() {
+  centerLocation = aerozones.find(
+    (aerozone) => aerozone.aerozoneName === "KAZANLAK"
+  );
+}
+
+// Loading map zoomed to current location
+function initMapAtCurrentLocation(position) {
+  curLocation = position.coords;
+  initAerozonesBGMap(
+    {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    },
+    { zoomAll: false }
+  );
+}
+
+getLocation();
+
+function initAerozonesBGMap(curLocation, options) {
+  aeroZonesBGMap = L.map("mapid");
+
+  if (options.zoomAll) {
+    zoomToAll();
+  } else {
+    aeroZonesBGMap.setView([curLocation.latitude, curLocation.longitude], zoom);
+  }
 
   L.tileLayer(
     "https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=aNpHWm5CgaWnr0IudewH",
@@ -33,23 +68,27 @@ function initAppMap(position) {
       accessToken: "your.mapbox.access.token",
     }
   ).addTo(aeroZonesBGMap);
+
   L.control
     .scale({
       metric: true,
       imperial: false,
     })
     .addTo(aeroZonesBGMap);
-  var marker = L.marker([curLocation.latitude, curLocation.longitude]).addTo(
-    aeroZonesBGMap
-  );
 
-  L.easyButton(
-    '<i class="fas fa-street-view"></i>',
-    function (btn, map) {
-      resetMapLocation();
-    },
-    "Back to current location"
-  ).addTo(aeroZonesBGMap);
+  if (!options.zoomAll) {
+    var marker = L.marker([curLocation.latitude, curLocation.longitude]).addTo(
+      aeroZonesBGMap
+    );
+
+    L.easyButton(
+      '<i class="fas fa-street-view"></i>',
+      function (btn, map) {
+        resetMapLocation();
+      },
+      "Back to current location"
+    ).addTo(aeroZonesBGMap);
+  }
 
   L.easyButton(
     '<i class="fas fa-globe-europe"></i>',
