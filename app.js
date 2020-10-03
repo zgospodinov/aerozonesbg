@@ -43,6 +43,10 @@ function initAppMap(position) {
     aeroZonesBGMap
   );
 
+  L.easyButton('<i class="fas fa-street-view"></i>', function(btn, map){
+    resetMapLocation();
+  }).addTo(aeroZonesBGMap);
+
   // draw safety zones that requiers airspace booking
   aerozones.forEach(function (zone) {
     if (zone.polygonType === "Circle") {
@@ -91,6 +95,7 @@ function zoomToAll(){
 
 function resetMapLocation() {
   aeroZonesBGMap.setView(applyCoordinates(curLocation));
+  aeroZonesBGMap.setZoom(zoom);
 };
 
 function applyCoordinates(pos) {
