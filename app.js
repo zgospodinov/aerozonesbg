@@ -4,6 +4,7 @@ var opacity = 0.1;
 var NM_TO_KM_FACTOR = 1.852;
 var zoomAllFeatureGroupLayerPoints = [];
 var zoomAllFeatureGroupLayer;
+var zones = [];
 
 function getLocation() {
   if (navigator.geolocation) {
@@ -107,17 +108,17 @@ function initAerozonesBGMap(curLocation, options) {
         weight: 0.8,
         fillOpacity: opacity,
         radius: zone.radius * NM_TO_KM_FACTOR * 1000, // Convert Nautical miles to meters,
-      })
-        .bindPopup(`<br>${zone.aerozoneName}</br>`)
-        .addTo(aeroZonesBGMap);
+      }).bindPopup(`<br>${zone.aerozoneName}</br>`);
+      zones.push(circle1);
+
+      // .addTo(aeroZonesBGMap);
     } else if (zone.polygonType === "Polygon") {
       var polygon = L.polygon(zone.points, {
         color: "red",
         fillColor: "#f03",
         opacity: opacity,
-      })
-        .bindPopup(zone.aerozoneName)
-        .addTo(aeroZonesBGMap);
+      }).bindPopup(zone.aerozoneName);
+      zones.push(polygon);
     } else if (zone.polygonType === "ArcSector") {
       var sector = L.circle(zone.points.center, {
         color: "red",
@@ -125,19 +126,26 @@ function initAerozonesBGMap(curLocation, options) {
         weight: 0.8,
         startAngle: zone.startAngle,
         endAngle: zone.endAngle,
-      })
-        .bindPopup(zone.aerozoneName)
-        .addTo(aeroZonesBGMap);
+      }).bindPopup(zone.aerozoneName);
+      zones.push(sector);
 
       var polyLineAddition = L.polygon(zone.points.all, {
         color: "red",
         weight: 0.8,
         fillColor: "#f03",
       })
-        .bindPopup(zone.aerozoneName)
-        .addTo(aeroZonesBGMap);
+        .bindPopup(zone.aerozoneName);
+        zones.push(polyLineAddition);
     }
   });
+
+  var zonesLayer = L.layerGroup(zones);
+  let layerSettingsOnMap = {
+    "BULATSA Authorization zones": zonesLayer,
+  };
+
+  aeroZonesBGMap.addLayer(zonesLayer);
+  L.control.layers(null, layerSettingsOnMap).addTo(aeroZonesBGMap);
 }
 
 function zoomToAll() {
