@@ -62,7 +62,7 @@ function initAerozonesBGMap(curLocation, options) {
     {
       attribution:
         '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-      maxZoom: 18,
+      maxZoom: 25,
       id: "mapbox/streets-v11",
       tileSize: 512,
       zoomOffset: -1,
@@ -81,23 +81,10 @@ function initAerozonesBGMap(curLocation, options) {
     var marker = L.marker([curLocation.latitude, curLocation.longitude]).addTo(
       aeroZonesBGMap
     );
-
-    L.easyButton(
-      '<i class="fas fa-street-view"></i>',
-      function (btn, map) {
-        resetMapLocation();
-      },
-      "Back to current location"
-    ).addTo(aeroZonesBGMap);
+    addEasyButton('<i class="fas fa-street-view"></i>', "Back to current location", resetMapLocation);
   }
 
-  L.easyButton(
-    '<i class="fas fa-globe-europe"></i>',
-    function (btn, map) {
-      zoomToAll();
-    },
-    "Show all zones"
-  ).addTo(aeroZonesBGMap);
+  addEasyButton('<i class="fas fa-globe-europe"></i>', "Show all zones", zoomToAll);
 
   // draw safety zones that requiers airspace booking
   aerozones.forEach(function (zone) {
@@ -147,6 +134,16 @@ function initAerozonesBGMap(curLocation, options) {
   aeroZonesBGMap.addLayer(zonesLayer);
   L.control.layers(null, layerSettingsOnMap).addTo(aeroZonesBGMap);
 }
+
+function addEasyButton(btnHtml, textHint, callback){
+  L.easyButton(
+    btnHtml,
+    function (btn, map) {
+      callback.call();
+    },
+    textHint
+  ).addTo(aeroZonesBGMap);
+};
 
 function zoomToAll() {
   aerozones.forEach(function (point) {
