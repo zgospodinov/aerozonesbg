@@ -98,7 +98,6 @@ function initAerozonesBGMap(curLocation, options) {
       }).bindPopup(`<br>${zone.aerozoneName}</br>`);
       zones.push(circle1);
 
-      // .addTo(aeroZonesBGMap);
     } else if (zone.polygonType === "Polygon") {
       var polygon = L.polygon(zone.points, {
         color: "red",
@@ -106,6 +105,7 @@ function initAerozonesBGMap(curLocation, options) {
         opacity: opacity,
       }).bindPopup(zone.aerozoneName);
       zones.push(polygon);
+      
     } else if (zone.polygonType === "ArcSector") {
       var sector = L.circle(zone.points.center, {
         color: "red",
@@ -126,6 +126,7 @@ function initAerozonesBGMap(curLocation, options) {
     }
   });
 
+  // Adding layers menu
   var zonesLayer = L.layerGroup(zones);
   let layerSettingsOnMap = {
     "BULATSA Authorization zones": zonesLayer,
@@ -135,11 +136,11 @@ function initAerozonesBGMap(curLocation, options) {
   L.control.layers(null, layerSettingsOnMap).addTo(aeroZonesBGMap);
 }
 
-function addEasyButton(btnHtml, textHint, callback){
+function addEasyButton(btnHtml, textHint, onClickCallBack){
   L.easyButton(
     btnHtml,
     function (btn, map) {
-      callback.call();
+      onClickCallBack.call();
     },
     textHint
   ).addTo(aeroZonesBGMap);
