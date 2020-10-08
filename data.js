@@ -1,3 +1,4 @@
+// Radius is in Nautilic miles - NM
 var aerozones = [
     {
       aerozoneName: "BAHOVO",
