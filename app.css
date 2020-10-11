@@ -1,0 +1,17 @@
+.pop-context-menu{
+    text-justify:auto;
+}
+
+.pop-context-menu:hover{
+    cursor: pointer;
+    color: #add9f4;
+}
+
+.pop-context-menu-line{
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.leaflet-popup-content-wrapper{
+    border-radius: 0%;
+}

@@ -5,6 +5,7 @@ var NM_TO_KM_FACTOR = 1.852;
 var zoomAllFeatureGroupLayerPoints = [];
 var zoomAllFeatureGroupLayer;
 var zones = [];
+var permitZones = [];
 
 function getLocation() {
   if (navigator.geolocation) {
@@ -51,8 +52,11 @@ getLocation();
 function initAerozonesBGMap(curLocation, options) {
   aeroZonesBGMap = L.map("mapid");
 
+  // add leaflet-geoman controls with some options to the map
+  initGeomanTools(aeroZonesBGMap);
+
   if (options.zoomAll) {
-    zoomToAll();
+    AerozonesBGUtils.zoomToAll();
   } else {
     aeroZonesBGMap.setView([curLocation.latitude, curLocation.longitude], zoom);
   }
@@ -81,34 +85,43 @@ function initAerozonesBGMap(curLocation, options) {
     var marker = L.marker([curLocation.latitude, curLocation.longitude]).addTo(
       aeroZonesBGMap
     );
-    addEasyButton('<i class="fas fa-street-view"></i>', "Back to current location", resetMapLocation);
+    AerozonesBGUtils.addEasyButton(
+      '<i class="fas fa-street-view"></i>',
+      "Back to current location",
+      AerozonesBGUtils.resetMapLocation
+    );
   }
 
-  addEasyButton('<i class="fas fa-globe-europe"></i>', "Show all zones", zoomToAll);
+  AerozonesBGUtils.addEasyButton(
+    '<i class="fas fa-globe-europe"></i>',
+    "Show all zones",
+    AerozonesBGUtils.zoomToAll
+  );
 
   // draw safety zones that requiers airspace booking
   aerozones.forEach(function (zone) {
     if (zone.polygonType === "Circle") {
-      var circle1 = L.circle(applyCoordinates(zone), {
+      var circle1 = L.circle(AerozonesBGUtils.applyCoordinates(zone), {
         color: "red",
+        pmIgnore: true,
         fillColor: "#f03",
         weight: 0.8,
         fillOpacity: opacity,
         radius: zone.radius * NM_TO_KM_FACTOR * 1000, // Convert Nautical miles to meters,
       }).bindPopup(`<br>${zone.aerozoneName}</br>`);
       zones.push(circle1);
-
     } else if (zone.polygonType === "Polygon") {
       var polygon = L.polygon(zone.points, {
         color: "red",
+        pmIgnore: true,
         fillColor: "#f03",
         opacity: opacity,
       }).bindPopup(zone.aerozoneName);
       zones.push(polygon);
-      
     } else if (zone.polygonType === "ArcSector") {
       var sector = L.circle(zone.points.center, {
         color: "red",
+        pmIgnore: true,
         radius: zone.radius * NM_TO_KM_FACTOR * 1000,
         weight: 0.8,
         startAngle: zone.startAngle,
@@ -120,9 +133,9 @@ function initAerozonesBGMap(curLocation, options) {
         color: "red",
         weight: 0.8,
         fillColor: "#f03",
-      })
-        .bindPopup(zone.aerozoneName);
-        zones.push(polyLineAddition);
+        pmIgnore: true,
+      }).bindPopup(zone.aerozoneName);
+      zones.push(polyLineAddition);
     }
   });
 
@@ -136,30 +149,98 @@ function initAerozonesBGMap(curLocation, options) {
   L.control.layers(null, layerSettingsOnMap).addTo(aeroZonesBGMap);
 }
 
-function addEasyButton(btnHtml, textHint, onClickCallBack){
-  L.easyButton(
-    btnHtml,
-    function (btn, map) {
-      onClickCallBack.call();
-    },
-    textHint
-  ).addTo(aeroZonesBGMap);
-};
 
-function zoomToAll() {
-  aerozones.forEach(function (point) {
-    if (point.aerozoneName === "KAZANLAK") {
-      aeroZonesBGMap.setView(point.points.center);
-      aeroZonesBGMap.setZoom(7);
-    }
+
+
+function initGeomanTools(map) {
+  map.pm.addControls({
+    position: "topleft",
+    drawCircleMarker: false,
+    drawPolyline: false,
+    drawMarker: false,
+  });
+
+  map.pm.setGlobalOptions({
+    tooltips: true,
+    snappable: true,
+    snapDistance: 25,
+  });
+
+  // Register Events
+  map.on("pm:create", (e) => {
+    // Get the newly drawn by the user permition zone
+    var permitZone = e.layer;
+    permitZones.push({id: permitZone._leaflet_id, source: permitZone});
+
+    permitZone.on("contextmenu", function (c) {
+      // Add/show context menu      
+      var pop = L.popup()
+        .setLatLng([c.latlng.lat, c.latlng.lng])
+        .setContent(
+          `
+          <span id="\`${c.target._leaflet_id}\`" class="pop-context-menu" onclick="copyCoordinatesToClipboard(event)">Copy coordinates</span>
+          <br>
+          <hr style="margin-top:2px;margin-bottom:2px;">
+          <span id="\`${c.target._leaflet_id}\`" class="pop-context-menu" onclick="test2(event)">Export to document</span>
+          `
+        )
+        .bindPopup(permitZone)        
+        .addTo(map);
+    });
+  });
+
+  map.on("pm:edit", (e) => {
+    console.log("shape was edited");
+  });
+
+  map.on("pm:remove", (e) =>{
+    permitZones = permitZones.filter(zone => {
+      return zone.id !== e.layer._leaflet_id;
+    });
   });
 }
 
-function resetMapLocation() {
-  aeroZonesBGMap.setView(applyCoordinates(curLocation));
-  aeroZonesBGMap.setZoom(zoom);
-}
+function copyCoordinatesToClipboard(el) {
+  let coordinates;
+  let elID = el.target.id.replace("`", "").replace("`", "");
+  var zoneToRequestPermition = permitZones.find(zone => {
+    return zone.id === Number(elID);
+  });
+ 
+  if (zoneToRequestPermition.source.pm._shape === "Circle") {
+    let formatedCenterCoords = CoordinatesFormatter.formatLatLngCoordinates([
+      zoneToRequestPermition.source._latlng.lat,
+      zoneToRequestPermition.source._latlng.lng,
+    ]);
+    var radius = zoneToRequestPermition.source._mRadius;
+    coordinates = `${formatedCenterCoords}, \n${Math.round(radius)}m`;
+  } else if (
+    zoneToRequestPermition.source.pm._shape === "Rectangle" ||
+    zoneToRequestPermition.source.pm._shape === "Polygon"
+  ) {
+    var corners = zoneToRequestPermition.source._latlngs[0]; // Assumming that there is no internal cutout area in polygons
+    corners.forEach((corner) => {
+      var coornerCoords = CoordinatesFormatter.formatLatLngCoordinates([corner.lat, corner.lng]);
+      if(!coordinates){
+        coordinates = `${coornerCoords}`;
+      }else{
+        coordinates += `\n${coornerCoords}`;
+      }
+    });
+  }
 
-function applyCoordinates(pos) {
-  return [pos.latitude, pos.longitude];
-}
+  var copyText = document.createElement("textarea");
+  copyText.value = coordinates;
+  copyText.setAttribute('readonly', '');
+  copyText.style.position = 'absolute';
+  copyText.style.left = '-9999px';
+  document.body.appendChild(copyText);
+  copyText.select();
+
+  document.execCommand("copy");
+  document.body.removeChild(copyText);
+};
+
+function test2(c) {
+  console.log("export to document");
+};
