@@ -149,9 +149,6 @@ function initAerozonesBGMap(curLocation, options) {
   L.control.layers(null, layerSettingsOnMap).addTo(aeroZonesBGMap);
 }
 
-
-
-
 function initGeomanTools(map) {
   map.pm.addControls({
     position: "topleft",
@@ -181,16 +178,12 @@ function initGeomanTools(map) {
           <span id="\`${c.target._leaflet_id}\`" class="pop-context-menu" onclick="copyCoordinatesToClipboard(event)">Copy coordinates</span>
           <br>
           <hr style="margin-top:2px;margin-bottom:2px;">
-          <span id="\`${c.target._leaflet_id}\`" class="pop-context-menu" onclick="test2(event)">Export to document</span>
+          <span id="\`${c.target._leaflet_id}\`" class="pop-context-menu" onclick="exportToDocument(event)">Export to document</span>
           `
         )
         .bindPopup(permitZone)        
         .addTo(map);
     });
-  });
-
-  map.on("pm:edit", (e) => {
-    console.log("shape was edited");
   });
 
   map.on("pm:remove", (e) =>{
@@ -241,6 +234,6 @@ function copyCoordinatesToClipboard(el) {
   document.body.removeChild(copyText);
 };
 
-function test2(c) {
-  console.log("export to document");
+function exportToDocument(c) {
+  alert("Not implemented yet");
 };
